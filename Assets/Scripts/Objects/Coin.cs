@@ -23,6 +23,11 @@ public class Coin : MonoBehaviour, IDataPersistence
         collectParticle.Stop();
     }
 
+
+    //
+    //
+    // LOAD SAVED DATA
+
     public void LoadData(GameData data) 
     {
         data.coinsCollected.TryGetValue(id, out collected);
@@ -31,6 +36,11 @@ public class Coin : MonoBehaviour, IDataPersistence
             visual.gameObject.SetActive(false);
         }
     }
+
+
+    //
+    //
+    // SAVE UPDATED DATA
 
     public void SaveData(GameData data) 
     {
@@ -41,6 +51,11 @@ public class Coin : MonoBehaviour, IDataPersistence
         data.coinsCollected.Add(id, collected);
     }
 
+
+    //
+    //
+    // COIN COLLECTED
+
     private void OnTriggerEnter2D() 
     {
         if (!collected) 
@@ -49,6 +64,11 @@ public class Coin : MonoBehaviour, IDataPersistence
             CollectCoin();
         }
     }
+
+
+    //
+    //
+    // COIN REMOVED FROM SCENE
 
     private void CollectCoin() 
     {

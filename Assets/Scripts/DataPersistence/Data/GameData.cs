@@ -5,16 +5,26 @@ using UnityEngine;
 [System.Serializable]
 public class GameData
 {
+    // VARIABLES
+
     public int deathCount;
     public Vector3 playerPosition;
     public SerializableDictionary<string, bool> coinsCollected;
+    public string userName;
 
-    // the values defined in this constructor will be the default values
-    // the game starts with when there's no data to load
+
+    // ALL GAMEDATA
+
     public GameData() 
     {
+
+        // 
+        //
+        // "NEW GAME" DEFAULT VALUES
+
         this.deathCount = 0;
         playerPosition = Vector3.zero;
         coinsCollected = new SerializableDictionary<string, bool>();
+        userName = "UserName";
     }
 }

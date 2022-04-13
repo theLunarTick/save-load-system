@@ -6,6 +6,8 @@ using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(Rigidbody2D))]
+
+
 public class CharacterController2D : MonoBehaviour, IDataPersistence
 {
 
@@ -17,21 +19,34 @@ public class CharacterController2D : MonoBehaviour, IDataPersistence
     [Header("Respawn Point")]
     [SerializeField] private Transform respawnPoint;
 
+
+    //
     // components attached to player
+
     private BoxCollider2D coll;
     private Rigidbody2D rb;
     private Animator animator;
     private SpriteRenderer sr;
     private ParticleSystem deathParticles;
 
+
+    //
     // input parameters for movement
+
     Vector2 moveDirection = Vector2.zero;
     bool jumpPressed = false;
 
+
+    //
     // other
+
     private bool facingRight = true;
     private bool isGrounded = false;
     private bool disableMovement = false;
+
+
+    //
+    // LOAD PLAYER COMPONENTS
 
     private void Awake()
     {
@@ -46,15 +61,27 @@ public class CharacterController2D : MonoBehaviour, IDataPersistence
         rb.gravityScale = gravityScale;
     }
 
+
+    //
+    // LOAD SAVED PLAYER POSITION
+
     public void LoadData(GameData data) 
     {
         this.transform.position = data.playerPosition;
     }
 
+
+    //
+    // SAVE UPDATED PLAYER POSITION
+
     public void SaveData(GameData data) 
     {
         data.playerPosition = this.transform.position;
     }
+
+
+    //
+    // PLAYER MOVEMENT
 
     private void FixedUpdate()
     {
@@ -76,23 +103,45 @@ public class CharacterController2D : MonoBehaviour, IDataPersistence
         UpdateAnimator();
     }
 
+
+    //
+    // NEW INPUTSYSTEM
+
     private void HandleInput() 
     {
         moveDirection = InputManager.instance.GetMoveDirection();
         jumpPressed = InputManager.instance.GetJumpPressed();
     }
 
+
+    //
+    // CHECK IS-GROUNDED
+
     private void UpdateIsGrounded()
     {
         Bounds colliderBounds = coll.bounds;
+        // Debug.Log("collidersBounds = " + colliderBounds);
+
         float colliderRadius = coll.size.x * 0.4f * Mathf.Abs(transform.localScale.x);
+        // Debug.Log("colliderRadius = " + colliderRadius);
+
         Vector3 groundCheckPos = colliderBounds.min + new Vector3(colliderBounds.size.x * 0.5f, colliderRadius * 0.9f, 0);
+        // Debug.Log("groundCheckPos = " + groundCheckPos);
+
+
+
         // Check if player is grounded
+
         Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheckPos, colliderRadius);
+
+
+
         // Check if any of the overlapping colliders are not player collider, if so, set isGrounded to true
+
         this.isGrounded = false;
         if (colliders.Length > 0)
         {
+            // Debug.Log("colliders.Length = " + colliders.Length);
             for (int i = 0; i < colliders.Length; i++)
             {
                 if (colliders[i] != coll)
@@ -100,14 +149,23 @@ public class CharacterController2D : MonoBehaviour, IDataPersistence
                     this.isGrounded = true;
                     break;
                 }
+                // Debug.Log("colliders[i] != coll = " + colliders.Length);
             }
         }
     }
+
+
+    //
+    // CONTROLS LEFT + RIGHT MOVEMENT
 
     private void HandleHorizontalMovement()
     {
         rb.velocity = new Vector2(moveDirection.x * runSpeed, rb.velocity.y);
     }
+
+
+    //
+    // JUMP CONTROLS
 
     private void HandleJumping()
     {
@@ -117,6 +175,10 @@ public class CharacterController2D : MonoBehaviour, IDataPersistence
             rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
         }
     }
+
+
+    //
+    // FACING DIRECTION
 
     private void UpdateFacingDirection()
     {
@@ -142,6 +204,10 @@ public class CharacterController2D : MonoBehaviour, IDataPersistence
         }
     }
 
+
+    //
+    // ANIMATION
+
     private void UpdateAnimator()
     {
         animator.SetBool("isGrounded", isGrounded);
@@ -149,14 +215,23 @@ public class CharacterController2D : MonoBehaviour, IDataPersistence
         animator.SetFloat("movementY", rb.velocity.y);
     }
 
+
+    //
+    // RESET PLAYER AFTER DEATH
+
     private IEnumerator HandleDeath() 
     {
+        //
         // freeze player movemet
         rb.gravityScale = 0;
         disableMovement = true;
         rb.velocity = Vector3.zero;
+
+        //
         // prevent other collisions
         coll.enabled = false;
+
+        //
         // hide the player visual
         sr.color = new Color(sr.color.r, sr.color.g, sr.color.b, 0);
         deathParticles.Play();
@@ -171,16 +246,25 @@ public class CharacterController2D : MonoBehaviour, IDataPersistence
 
     private void Respawn() 
     {
+        //
         // enable movement
         rb.gravityScale = gravityScale;
         coll.enabled = true;
         disableMovement = false;
+
+        //
         // show player visual
         sr.color = new Color(sr.color.r, sr.color.g, sr.color.b, 1);
         deathParticles.Stop();
+
+        //
         // move the player to the respawn point
         this.transform.position = respawnPoint.position;
     }
+
+
+    //
+    // CAUSE DAMAGE
 
     private void OnCollisionEnter2D(Collision2D collision) 
     {

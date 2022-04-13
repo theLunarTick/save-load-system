@@ -15,14 +15,23 @@ public class DataPersistenceManager : MonoBehaviour
 
     public static DataPersistenceManager instance { get; private set; }
 
+
+    //
+    // CHECKS DATAPERSISTENCEMANAGER INSTANCE
+
     private void Awake() 
     {
         if (instance != null) 
         {
             Debug.LogError("Found more than one Data Persistence Manager in the scene.");
         }
+
         instance = this;
     }
+
+
+    //
+    // LOAD SAVED DATA to DATA HANDLER
 
     private void Start() 
     {
@@ -31,17 +40,28 @@ public class DataPersistenceManager : MonoBehaviour
         LoadGame();
     }
 
+
+    //
+    // NEW GAME - DEFAULT DATA
+
     public void NewGame() 
     {
         this.gameData = new GameData();
     }
 
+
+    //
+    // LOAD GAME
+
     public void LoadGame()
     {
-        // load any saved data from a file using the data handler
+
+        // LOAD SAVED DATA TO - DATAHANDLER   --  load any saved data from a file using the data handler
         this.gameData = dataHandler.Load();
-        
-        // if no data can be loaded, initialize to a new game
+
+
+
+        // LOAD NEW GAME  --  if no data can be loaded, initialize to a new game
         if (this.gameData == null) 
         {
             Debug.Log("No data was found. Initializing data to defaults.");

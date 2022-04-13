@@ -31,4 +31,13 @@ public class GameEventsManager : MonoBehaviour
             onCoinCollected();
         }
     }
+    public event Action onButtonClicked;
+    public void InfoUpdate()
+    {
+        if (onButtonClicked != null)
+        {
+            InfoUpdate();
+        }
+    }
+
 }

@@ -9,11 +9,16 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
     [SerializeField] private List<TKey> keys = new List<TKey>();
     [SerializeField] private List<TValue> values = new List<TValue>();
 
-    // save the dictionary to lists
+
+
+    // SAVE DICTIONARY  --  save the dictionary to lists
+
     public void OnBeforeSerialize()
     {
         keys.Clear();
         values.Clear();
+
+
         foreach (KeyValuePair<TKey, TValue> pair in this) 
         {
             keys.Add(pair.Key);
@@ -21,7 +26,10 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
         }
     }
 
-    // load the dictionary from lists
+
+
+    // LOAD DICTIONARY  --  load the dictionary from lists
+
     public void OnAfterDeserialize()
     {
         this.Clear();
